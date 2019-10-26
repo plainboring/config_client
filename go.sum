@@ -136,6 +136,8 @@ github.com/plainboring/kvproto v0.0.0-20191023102222-2d6322df711c h1:ozbf8DiEsx7
 github.com/plainboring/kvproto v0.0.0-20191023102222-2d6322df711c/go.mod h1:QMdbTAXCHzzygQzqcG9uVUgU2fKeSN1GmfMiykdSzzY=
 github.com/plainboring/kvproto v0.0.0-20191026004733-5de0cc294a0e h1:rPQLHlQJWqn7+W4WqUqJR9wvVioCmsabvBRfLxcl7Ho=
 github.com/plainboring/kvproto v0.0.0-20191026004733-5de0cc294a0e/go.mod h1:WWLmULLO7l8IOcQG+t+ItJ3fEcrL5FxF0Wu+HrMy26w=
+github.com/plainboring/kvproto v0.0.0-20191026020318-70a7396899af h1:4H0LWT1vaeTL9NuKDNRq1DK/9FxFlGeMC5YaNZ3p/Nc=
+github.com/plainboring/kvproto v0.0.0-20191026020318-70a7396899af/go.mod h1:WWLmULLO7l8IOcQG+t+ItJ3fEcrL5FxF0Wu+HrMy26w=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_golang v0.8.0 h1:1921Yw9Gc3iSc4VQh3PIoOqgPCZS7G/4xQNVUp8Mda8=
