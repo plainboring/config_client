@@ -85,6 +85,7 @@ func (cli *configClient) Get(comp string, storeID uint64) (string, error) {
 			ClusterId: cli.clusterID,
 		},
 		Component: ParseComponent(comp),
+		StoreId:   storeID,
 	}
 	resp, err := client.Get(ctx, req)
 	if err != nil {

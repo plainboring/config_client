@@ -18,4 +18,4 @@ require (
 )
 
 // replace github.com/pingcap/kvproto => github.com/plainboring/kvproto master
-replace github.com/pingcap/kvproto => github.com/plainboring/kvproto v0.0.0-20191026023322-e80cd74509d2
+replace github.com/pingcap/kvproto => github.com/plainboring/kvproto v0.0.0-20191026132945-c4450272525d

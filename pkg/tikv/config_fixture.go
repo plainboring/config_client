@@ -51,6 +51,7 @@ heavy-load-threshold = 300
 heavy-load-wait-duration = "1ms"
 
 [server.labels]
+"a" = "b"
 
 [storage]
 data-dir = "./"

@@ -96,7 +96,7 @@ func newGetCfgCommand() *cobra.Command {
 	}
 
 	command.Flags().StringP("comp", "c", "tikv", "update component config")
-	command.Flags().Uint64P("store", "s", 0,
+	command.Flags().Uint64P("store", "s", 1,
 		"update the given store ids value")
 	return command
 }
