@@ -2,7 +2,6 @@ package cfgclient
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/pingcap/errors"
@@ -64,8 +63,28 @@ func (cli *ConfigClient) Client(pdAddr string) (configpb.ConfigClient, error) {
 	return configpb.NewConfigClient(conn), nil
 }
 
+// Get config
+func (cli *ConfigClient) Get(comp string, storeID uint64) (string, error) {
+	ctx, cancel := context.WithCancel(cli.ctx)
+	defer cancel()
+	client, err := cli.Client(cli.pdAddr)
+	if err != nil {
+		return "", errors.Trace(err)
+	}
+	req := &configpb.GetRequest{
+		Component: ParseComponent(comp),
+	}
+	resp, err := client.Get(ctx, req)
+	if err != nil {
+		return "", errors.Trace(err)
+	}
+	log.Info("config get", zap.String("config", resp.Config))
+	return resp.Config, nil
+}
+
 // Update config
-func (cli *ConfigClient) Update(comp, name, value string, storeID uint64) error {
+func (cli *ConfigClient) Update(
+	comp string, subs []string, name, value string, storeID uint64) error {
 	ctx, cancel := context.WithCancel(cli.ctx)
 	defer cancel()
 	client, err := cli.Client(cli.pdAddr)
@@ -73,14 +92,30 @@ func (cli *ConfigClient) Update(comp, name, value string, storeID uint64) error 
 		return errors.Trace(err)
 	}
 	req := &configpb.UpdateRequest{
-		Component: configpb.Component_TiKV,
-		// Subsystem:   "raftstore",
+		Component: ParseComponent(comp),
+		Entry: &configpb.ConfigEntry{
+			Subsystem: subs,
+			Name:      name,
+			Value:     value,
+		},
 	}
+	log.Info("config update", zap.Reflect("request", req))
 	resp, err := client.Update(ctx, req)
 	if err != nil {
 		return errors.Trace(err)
 	}
-
-	fmt.Printf("%v\n", resp.Config)
+	log.Info("config update", zap.Reflect("response", resp))
 	return nil
+}
+
+// ParseComponent parse a Component string
+func ParseComponent(str string) configpb.Component {
+	if str == "tikv" {
+		return configpb.Component_TiKV
+	} else if str == "pd" {
+		return configpb.Component_PD
+	} else {
+		log.Fatal("unknown component", zap.String("component", str))
+		return configpb.Component_UNKNOWN
+	}
 }
