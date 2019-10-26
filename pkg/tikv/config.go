@@ -1,8 +1,56 @@
 package tikv
 
-// Config is the configuration of TiKV server.
+// Config is the configuration of TiKV.
 type Config struct {
+	Server    ServerConfig    `toml:"server"`
+	Storage   StorageConfig   `toml:"storage"`
 	Raftstore RaftstoreConfig `toml:"raftstore"`
+}
+
+// StorageConfig is the config of storage
+type StorageConfig struct {
+	DataDir                        string           `toml:"data-dir"`
+	MaxKeySize                     int64            `toml:"max-key-size"`
+	SchedulerNotifyCapacity        int64            `toml:"scheduler-notify-capacity"`
+	SchedulerConcurrency           int64            `toml:"scheduler-concurrency"`
+	SchedulerWorkerPoolSize        int64            `toml:"scheduler-worker-pool-size"`
+	SchedulerPendingWriteThreshold string           `toml:"scheduler-pending-write-threshold"`
+	BlockCache                     BlockCacheConfig `toml:"block-cache"`
+}
+
+// BlockCacheConfig is the config of a block cache
+type BlockCacheConfig struct {
+	Shared              bool    `toml:"shared"`
+	Capacity            string  `toml:"capacity"`
+	NumShardBits        int64   `toml:"num-shard-bits"`
+	StrictCapacityLimit bool    `toml:"strict-capacity-limit"`
+	HighPriPoolRatio    float64 `toml:"high-pri-pool-ratio"`
+	MemoryAllocator     string  `toml:"memory-allocator"`
+}
+
+// ServerConfig is the configuration of TiKV server.
+type ServerConfig struct {
+	GrpcCompressionType              string            `toml:"grpc-compression-type"`
+	GrpcConcurrency                  int64             `toml:"grpc-concurrency"`
+	GrpcConcurrentStream             int64             `toml:"grpc-concurrent-stream"`
+	GrpcRaftConnNum                  int64             `toml:"grpc-raft-conn-num"`
+	GrpcStreamInitialWindowSize      string            `toml:"grpc-stream-initial-window-size"`
+	GrpcKeepaliveTime                string            `toml:"grpc-keepalive-time"`
+	GrpcKeepaliveTimeout             string            `toml:"grpc-keepalive-timeout"`
+	ConcurrentSendSnapLimit          int64             `toml:"concurrent-send-snap-limit"`
+	ConcurrentRecvSnapLimit          int64             `toml:"concurrent-recv-snap-limit"`
+	EndPointRecursionLimit           int64             `toml:"end-point-recursion-limit"`
+	EndPointStreamChannelSize        int64             `toml:"end-point-stream-channel-size"`
+	EndPointBatchRowLimit            int64             `toml:"end-point-batch-row-limit"`
+	EndPointStreamBatchRowLimit      int64             `toml:"end-point-stream-batch-row-limit"`
+	EndPointEnableBatchIfPossible    bool              `toml:"end-point-enable-batch-if-possible"`
+	EndPointRequestMaxHandleDuration string            `toml:"end-point-request-max-handle-duration"`
+	SnapMaxWriteBytesPerSec          string            `toml:"snap-max-write-bytes-per-sec"`
+	SnapMaxTotalSize                 string            `toml:"snap-max-total-size"`
+	StatsConcurrency                 int64             `toml:"stats-concurrency"`
+	HeavyLoadThreshold               int64             `toml:"heavy-load-threshold"`
+	HeavyLoadWaitDuration            string            `toml:"heavy-load-wait-duration"`
+	Labels                           map[string]string `toml:"labels"`
 }
 
 // RaftstoreConfig is the configuration of TiKV raftstore component.
