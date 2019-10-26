@@ -25,9 +25,10 @@ type ConfigClient interface {
 
 // configClient the client of a TiDB/TiKV Config service.
 type configClient struct {
-	ctx      context.Context
-	pdClient pd.Client
-	pdAddr   string
+	ctx       context.Context
+	pdClient  pd.Client
+	pdAddr    string
+	clusterID uint64
 }
 
 // NewConfigClient creates a new ConfigClient.
@@ -38,10 +39,12 @@ func NewConfigClient(ctx context.Context, pdAddr string) (ConfigClient, error) {
 		return nil, errors.Trace(err)
 	}
 
+	clusterID := pdClient.GetClusterID(ctx)
 	return &configClient{
-		ctx:      ctx,
-		pdClient: pdClient,
-		pdAddr:   pdAddr,
+		ctx:       ctx,
+		pdClient:  pdClient,
+		pdAddr:    pdAddr,
+		clusterID: clusterID,
 	}, nil
 }
 
@@ -78,6 +81,9 @@ func (cli *configClient) Get(comp string, storeID uint64) (string, error) {
 		return "", errors.Trace(err)
 	}
 	req := &configpb.GetRequest{
+		Header: &configpb.RequestHeader{
+			ClusterId: cli.clusterID,
+		},
 		Component: ParseComponent(comp),
 	}
 	resp, err := client.Get(ctx, req)
@@ -98,6 +104,9 @@ func (cli *configClient) Update(
 		return errors.Trace(err)
 	}
 	req := &configpb.UpdateRequest{
+		Header: &configpb.RequestHeader{
+			ClusterId: cli.clusterID,
+		},
 		Component: ParseComponent(comp),
 		Entry: &configpb.ConfigEntry{
 			Subsystem: subs,
