@@ -70,14 +70,14 @@ type ScheduleConfig struct {
 	MaxMergeRegionSize uint64 `toml:"max-merge-region-size,omitempty" json:"max-merge-region-size"`
 	MaxMergeRegionKeys uint64 `toml:"max-merge-region-keys,omitempty" json:"max-merge-region-keys"`
 	// SplitMergeInterval is the minimum interval time to permit merge after split.
-	SplitMergeInterval Duration `toml:"split-merge-interval,omitempty" json:"split-merge-interval"`
+	// SplitMergeInterval Duration `toml:"split-merge-interval,omitempty" json:"split-merge-interval"`
 	// EnableOneWayMerge is the option to enable one way merge. This means a Region can only be merged into the next region of it.
 	EnableOneWayMerge bool `toml:"enable-one-way-merge,omitempty" json:"enable-one-way-merge,string"`
 	// PatrolRegionInterval is the interval for scanning region during patrol.
-	PatrolRegionInterval Duration `toml:"patrol-region-interval,omitempty" json:"patrol-region-interval"`
+	// PatrolRegionInterval Duration `toml:"patrol-region-interval,omitempty" json:"patrol-region-interval"`
 	// MaxStoreDownTime is the max duration after which
 	// a store will be considered to be down if it hasn't reported heartbeats.
-	MaxStoreDownTime Duration `toml:"max-store-down-time,omitempty" json:"max-store-down-time"`
+	// MaxStoreDownTime Duration `toml:"max-store-down-time,omitempty" json:"max-store-down-time"`
 	// LeaderScheduleLimit is the max coexist leader schedules.
 	LeaderScheduleLimit uint64 `toml:"leader-schedule-limit,omitempty" json:"leader-schedule-limit"`
 	// LeaderScheduleStrategy is the option to balance leader, there are some strategics supported: ["count", "size"], default: "count"
@@ -133,6 +133,23 @@ type ScheduleConfig struct {
 	// DisableNamespaceRelocation is the option to prevent namespace checker
 	// from moving replica to the target namespace.
 	DisableNamespaceRelocation bool `toml:"disable-namespace-relocation" json:"disable-namespace-relocation,string"`
+
+	// Schedulers support for loading customized schedulers
+	Schedulers SchedulerConfigs `toml:"schedulers,omitempty" json:"schedulers-v2"` // json v2 is for the sake of compatible upgrade
+
+	// Only used to display
+	SchedulersPayload map[string]string `json:"schedulers,omitempty"`
+}
+
+// SchedulerConfigs is a slice of customized scheduler configuration.
+type SchedulerConfigs []SchedulerConfig
+
+// SchedulerConfig is customized scheduler configuration
+type SchedulerConfig struct {
+	Type        string   `toml:"type" json:"type"`
+	Args        []string `toml:"args,omitempty" json:"args"`
+	Disable     bool     `toml:"disable" json:"disable"`
+	ArgsPayload string   `toml:"args-payload,omitempty" json:"args-payload"`
 }
 
 // Duration is a wrapper of time.Duration for TOML and JSON.
