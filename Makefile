@@ -5,7 +5,7 @@ PACKAGES := go list ./...
 PACKAGE_DIRECTORIES := $(PACKAGES) | sed 's/github.com\/plainboring\/config_client\/*//'
 GOCHECKER := awk '{ print } END { if (NR > 0) { exit 1 } }'
 
-all: check build test
+all: build
 
 build:
 	GO111MODULE=on go build -race
