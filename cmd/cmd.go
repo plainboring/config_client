@@ -13,7 +13,7 @@ var (
 	initOnce       = sync.Once{}
 	defaultContext context.Context
 
-	defaultConfigClient *cfgclient.ConfigClient
+	defaultConfigClient cfgclient.ConfigClient
 )
 
 const (
@@ -23,7 +23,8 @@ const (
 
 // AddFlags adds flags to the given cmd.
 func AddFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringP(FlagPD, "u", "127.0.0.1:2379", "PD address")
+	cmd.PersistentFlags().StringP(FlagPD, "u", "", "PD address")
+	cmd.PersistentFlags().BoolP("mock", "m", false, "use mock config client")
 	cmd.MarkFlagRequired(FlagPD)
 }
 
@@ -36,11 +37,20 @@ func Init(ctx context.Context, cmd *cobra.Command) (err error) {
 		if err != nil {
 			return
 		}
-		if addr == "" {
+		mock, err := cmd.Flags().GetBool("mock")
+		if err != nil {
+			return
+		}
+		if addr == "" && !mock {
 			err = errors.Errorf("pd address can not be empty")
 			return
 		}
-		defaultConfigClient, err = cfgclient.NewConfigClient(defaultContext, addr)
+
+		if mock {
+			defaultConfigClient, err = cfgclient.NewMockClient()
+		} else {
+			defaultConfigClient, err = cfgclient.NewConfigClient(defaultContext, addr)
+		}
 		if err != nil {
 			return
 		}

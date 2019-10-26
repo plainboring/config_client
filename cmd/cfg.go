@@ -82,6 +82,10 @@ func newGetCfgCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			// mock, err := command.Flags().GetBool("mock")
+			// if err != nil {
+			// 	return err
+			// }
 			config, err := defaultConfigClient.Get(comp, store)
 			fmt.Println(config)
 			if err != nil {

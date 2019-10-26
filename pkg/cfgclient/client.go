@@ -17,22 +17,28 @@ const (
 	dialTimeout = 5 * time.Second
 )
 
-// ConfigClient the client of a TiDB/TiKV Config service.
-type ConfigClient struct {
+// ConfigClient is the interface of a config client.
+type ConfigClient interface {
+	Get(comp string, storeID uint64) (string, error)
+	Update(comp string, subs []string, name, value string, storeID uint64) error
+}
+
+// configClient the client of a TiDB/TiKV Config service.
+type configClient struct {
 	ctx      context.Context
 	pdClient pd.Client
 	pdAddr   string
 }
 
 // NewConfigClient creates a new ConfigClient.
-func NewConfigClient(ctx context.Context, pdAddr string) (*ConfigClient, error) {
+func NewConfigClient(ctx context.Context, pdAddr string) (ConfigClient, error) {
 	log.Info("connect pd", zap.String("addr", pdAddr))
 	pdClient, err := pd.NewClient([]string{pdAddr}, pd.SecurityOption{})
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
 
-	return &ConfigClient{
+	return &configClient{
 		ctx:      ctx,
 		pdClient: pdClient,
 		pdAddr:   pdAddr,
@@ -40,7 +46,7 @@ func NewConfigClient(ctx context.Context, pdAddr string) (*ConfigClient, error) 
 }
 
 // Client returns a ConfigClient.
-func (cli *ConfigClient) Client(pdAddr string) (configpb.ConfigClient, error) {
+func (cli *configClient) Client(pdAddr string) (configpb.ConfigClient, error) {
 	opt := grpc.WithInsecure()
 	dailCtx, cancel := context.WithTimeout(cli.ctx, dialTimeout)
 	keepAlive := 10
@@ -64,7 +70,7 @@ func (cli *ConfigClient) Client(pdAddr string) (configpb.ConfigClient, error) {
 }
 
 // Get config
-func (cli *ConfigClient) Get(comp string, storeID uint64) (string, error) {
+func (cli *configClient) Get(comp string, storeID uint64) (string, error) {
 	ctx, cancel := context.WithCancel(cli.ctx)
 	defer cancel()
 	client, err := cli.Client(cli.pdAddr)
@@ -83,7 +89,7 @@ func (cli *ConfigClient) Get(comp string, storeID uint64) (string, error) {
 }
 
 // Update config
-func (cli *ConfigClient) Update(
+func (cli *configClient) Update(
 	comp string, subs []string, name, value string, storeID uint64) error {
 	ctx, cancel := context.WithCancel(cli.ctx)
 	defer cancel()
