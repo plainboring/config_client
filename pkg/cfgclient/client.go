@@ -114,6 +114,7 @@ func (cli *configClient) Update(
 			Name:      name,
 			Value:     value,
 		},
+		StoreId: storeID,
 	}
 	log.Info("config update", zap.Reflect("request", req))
 	resp, err := client.Update(ctx, req)
