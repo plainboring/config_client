@@ -5,6 +5,102 @@ type Config struct {
 	Server    ServerConfig    `toml:"server"`
 	Storage   StorageConfig   `toml:"storage"`
 	Raftstore RaftstoreConfig `toml:"raftstore"`
+	Rocksdb   DbConfig        `toml:"rocksdb"`
+}
+
+// DbConfig is the rocksdb config.
+type DbConfig struct {
+	WalRecoveryMode                  int64         `toml:"wal-recovery-mode"`
+	WalDir                           string        `toml:"wal-dir"`
+	WalTTLSeconds                    int64         `toml:"wal-ttl-seconds"`
+	WalSizeLimit                     string        `toml:"wal-size-limit"`
+	MaxTotalWalSize                  string        `toml:"max-total-wal-size"`
+	MaxBackgroundJobs                int64         `toml:"max-background-jobs"`
+	MaxManifestFileSize              string        `toml:"max-manifest-file-size"`
+	CreateIfMissing                  bool          `toml:"create-if-missing"`
+	MaxOpenFiles                     int64         `toml:"max-open-files"`
+	EnableStatistics                 bool          `toml:"enable-statistics"`
+	StatsDumpPeriod                  string        `toml:"stats-dump-period"`
+	CompactionReadaheadSize          string        `toml:"compaction-readahead-size"`
+	InfoLogMaxSize                   string        `toml:"info-log-max-size"`
+	InfoLogRollTime                  string        `toml:"info-log-roll-time"`
+	InfoLogKeepLogFileNum            int64         `toml:"info-log-keep-log-file-num"`
+	InfoLogDir                       string        `toml:"info-log-dir"`
+	RateBytesPerSec                  string        `toml:"rate-bytes-per-sec"`
+	RateLimiterMode                  int64         `toml:"rate-limiter-mode"`
+	AutoTuned                        bool          `toml:"auto-tuned"`
+	BytesPerSync                     string        `toml:"bytes-per-sync"`
+	WalBytesPerSync                  string        `toml:"wal-bytes-per-sync"`
+	MaxSubCompactions                int64         `toml:"max-sub-compactions"`
+	WritableFileMaxBufferSize        string        `toml:"writable-file-max-buffer-size"`
+	UseDirectIoForFlushAndCompaction bool          `toml:"use-direct-io-for-flush-and-compaction"`
+	EnablePipelinedWrite             bool          `toml:"enable-pipelined-write"`
+	Defaultcf                        CfConfig      `toml:"defaultcf"`
+	Writecf                          CfConfig      `toml:"writecf"`
+	Lockcf                           CfConfig      `toml:"lockcf"`
+	Raftcf                           CfConfig      `toml:"raftcf"`
+	Titan                            TitanDBConfig `toml:"titan"`
+}
+
+// CfConfig is the config of a cf
+type CfConfig struct {
+	BlockSize                       string        `toml:"block-size"`
+	BlockCacheSize                  string        `toml:"block-cache-size"`
+	DisableBlockCache               bool          `toml:"disable-block-cache"`
+	CacheIndexAndFilterBlocks       bool          `toml:"cache-index-and-filter-blocks"`
+	PinL0FilterAndIndexBlocks       bool          `toml:"pin-l0-filter-and-index-blocks"`
+	UseBloomFilter                  bool          `toml:"use-bloom-filter"`
+	OptimizeFiltersForHits          bool          `toml:"optimize-filters-for-hits"`
+	WholeKeyFiltering               bool          `toml:"whole-key-filtering"`
+	BloomFilterBitsPerKey           int64         `toml:"bloom-filter-bits-per-key"`
+	BlockBasedBloomFilter           bool          `toml:"block-based-bloom-filter"`
+	ReadAmpBytesPerBit              int64         `toml:"read-amp-bytes-per-bit"`
+	CompressionPerLevel             []string      `toml:"compression-per-level"`
+	WriteBufferSize                 string        `toml:"write-buffer-size"`
+	MaxWriteBufferNumber            int64         `toml:"max-write-buffer-number"`
+	MinWriteBufferNumberToMerge     int64         `toml:"min-write-buffer-number-to-merge"`
+	MaxBytesForLevelBase            string        `toml:"max-bytes-for-level-base"`
+	TargetFileSizeBase              string        `toml:"target-file-size-base"`
+	Level0FileNumCompactionTrigger  int64         `toml:"level0-file-num-compaction-trigger"`
+	Level0SlowdownWritesTrigger     int64         `toml:"level0-slowdown-writes-trigger"`
+	Level0StopWritesTrigger         int64         `toml:"level0-stop-writes-trigger"`
+	MaxCompactionBytes              string        `toml:"max-compaction-bytes"`
+	CompactionPri                   int64         `toml:"compaction-pri"`
+	DynamicLevelBytes               bool          `toml:"dynamic-level-bytes"`
+	NumLevels                       int64         `toml:"num-levels"`
+	MaxBytesForLevelMultiplier      int64         `toml:"max-bytes-for-level-multiplier"`
+	CompactionStyle                 int64         `toml:"compaction-style"`
+	DisableAutoCompactions          bool          `toml:"disable-auto-compactions"`
+	SoftPendingCompactionBytesLimit string        `toml:"soft-pending-compaction-bytes-limit"`
+	HardPendingCompactionBytesLimit string        `toml:"hard-pending-compaction-bytes-limit"`
+	ForceConsistencyChecks          bool          `toml:"force-consistency-checks"`
+	PropSizeIndexDistance           int64         `toml:"prop-size-index-distance"`
+	PropKeysIndexDistance           int64         `toml:"prop-keys-index-distance"`
+	EnableDoublySkiplist            bool          `toml:"enable-doubly-skiplist"`
+	Titan                           TitanCfConfig `toml:"titan"`
+}
+
+// TitanCfConfig is the titian config.
+type TitanCfConfig struct {
+	MinBlobSize             string  `toml:"min-blob-size"`
+	BlobFileCompression     string  `toml:"blob-file-compression"`
+	BlobCacheSize           string  `toml:"blob-cache-size"`
+	MinGcBatchSize          string  `toml:"min-gc-batch-size"`
+	MaxGcBatchSize          string  `toml:"max-gc-batch-size"`
+	DiscardableRatio        float64 `toml:"discardable-ratio"`
+	SampleRatio             float64 `toml:"sample-ratio"`
+	MergeSmallFileThreshold string  `toml:"merge-small-file-threshold"`
+	BlobRunMode             string  `toml:"blob-run-mode"`
+}
+
+// TitanDBConfig is the config a titian db.
+type TitanDBConfig struct {
+	Enabled         bool   `toml:"enabled"`
+	Dirname         string `toml:"dirname"`
+	DisableGc       bool   `toml:"disable-gc"`
+	MaxBackgroundGc int64  `toml:"max-background-gc"`
+	// The value of this field will be truncated to seconds.
+	PurgeObsoleteFilesPeriod string `toml:"purge-obsolete-files-period"`
 }
 
 // StorageConfig is the config of storage

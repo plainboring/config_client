@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"context"
+	"log"
 	"sync"
 
 	"github.com/pingcap/errors"
 	"github.com/plainboring/config_client/pkg/cfgclient"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
 
 var (
@@ -52,7 +54,7 @@ func Init(ctx context.Context, cmd *cobra.Command) (err error) {
 			defaultConfigClient, err = cfgclient.NewConfigClient(defaultContext, addr)
 		}
 		if err != nil {
-			return
+			log.Fatal("init failed", zap.Error(err))
 		}
 	})
 	return
